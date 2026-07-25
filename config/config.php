@@ -4,17 +4,32 @@
  * Contains sensitive database and application settings
  */
 
+// Helper to safely retrieve environment variables from $_ENV, $_SERVER, or getenv()
+function getEnvVar($key, $default = null) {
+    if (isset($_ENV[$key]) && $_ENV[$key] !== '') {
+        return $_ENV[$key];
+    }
+    if (isset($_SERVER[$key]) && $_SERVER[$key] !== '') {
+        return $_SERVER[$key];
+    }
+    $val = getenv($key);
+    if ($val !== false && $val !== '') {
+        return $val;
+    }
+    return $default;
+}
+
 // Database Configuration
 // SECURITY: Change these credentials for production!
 // Create a dedicated MySQL user with limited privileges instead of root.
-define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
-define('DB_USER', getenv('DB_USER') ?: 'root');
-define('DB_PASS', getenv('DB_PASS') !== false ? getenv('DB_PASS') : '');
-define('DB_NAME', getenv('DB_NAME') ?: 'pet_store_inventory');
+define('DB_HOST', getEnvVar('DB_HOST', 'localhost'));
+define('DB_USER', getEnvVar('DB_USER', 'root'));
+define('DB_PASS', getEnvVar('DB_PASS', ''));
+define('DB_NAME', getEnvVar('DB_NAME', 'pet_store_inventory'));
 
 // Application URL (used in emails and redirects)
 // Change this to your production domain when deploying
-define('BASE_URL', getenv('BASE_URL') ?: 'http://localhost/petv10');
+define('BASE_URL', getEnvVar('BASE_URL', 'http://localhost/petv10'));
 
 // Session Configuration
 define('SESSION_TIMEOUT', 1800); // 30 minutes in seconds
@@ -38,14 +53,14 @@ if (file_exists(__DIR__ . '/config.local.php')) {
 }
 
 // SMTP Mail Configuration (Gmail)
-if (!defined('SMTP_HOST')) define('SMTP_HOST', getenv('SMTP_HOST') ?: 'ssl://smtp.gmail.com');
-if (!defined('SMTP_PORT')) define('SMTP_PORT', getenv('SMTP_PORT') !== false ? intval(getenv('SMTP_PORT')) : 465);
-if (!defined('SMTP_USER')) define('SMTP_USER', getenv('SMTP_USER') ?: 'andreicarpio11@gmail.com'); // Put your Gmail address here
-if (!defined('SMTP_PASS')) define('SMTP_PASS', getenv('SMTP_PASS') ?: 'your-gmail-app-password'); // Put your Gmail App Password here
-if (!defined('SMTP_FROM_NAME')) define('SMTP_FROM_NAME', getenv('SMTP_FROM_NAME') ?: 'Pawganic Supplies');
+if (!defined('SMTP_HOST')) define('SMTP_HOST', getEnvVar('SMTP_HOST', 'ssl://smtp.gmail.com'));
+if (!defined('SMTP_PORT')) define('SMTP_PORT', getEnvVar('SMTP_PORT') !== null ? intval(getEnvVar('SMTP_PORT')) : 465);
+if (!defined('SMTP_USER')) define('SMTP_USER', getEnvVar('SMTP_USER', 'andreicarpio11@gmail.com')); // Put your Gmail address here
+if (!defined('SMTP_PASS')) define('SMTP_PASS', getEnvVar('SMTP_PASS', 'your-gmail-app-password')); // Put your Gmail App Password here
+if (!defined('SMTP_FROM_NAME')) define('SMTP_FROM_NAME', getEnvVar('SMTP_FROM_NAME', 'Pawganic Supplies'));
 
 // Google OAuth Configuration
-if (!defined('GOOGLE_CLIENT_ID')) define('GOOGLE_CLIENT_ID', getenv('GOOGLE_CLIENT_ID') ?: 'your-google-client-id');
-if (!defined('GOOGLE_CLIENT_SECRET')) define('GOOGLE_CLIENT_SECRET', getenv('GOOGLE_CLIENT_SECRET') ?: 'your-google-client-secret');
-if (!defined('GOOGLE_REDIRECT_URI')) define('GOOGLE_REDIRECT_URI', getenv('GOOGLE_REDIRECT_URI') ?: BASE_URL . '/google_callback.php');
+if (!defined('GOOGLE_CLIENT_ID')) define('GOOGLE_CLIENT_ID', getEnvVar('GOOGLE_CLIENT_ID', 'your-google-client-id'));
+if (!defined('GOOGLE_CLIENT_SECRET')) define('GOOGLE_CLIENT_SECRET', getEnvVar('GOOGLE_CLIENT_SECRET', 'your-google-client-secret'));
+if (!defined('GOOGLE_REDIRECT_URI')) define('GOOGLE_REDIRECT_URI', getEnvVar('GOOGLE_REDIRECT_URI', BASE_URL . '/google_callback.php'));
 ?>
