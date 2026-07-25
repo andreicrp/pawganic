@@ -1,0 +1,8 @@
+/backups
+/logs
+/scratch
+.git
+.gemini
+cookies.txt
+debug.log
+config/logs/errors.log
